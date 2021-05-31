@@ -13,27 +13,41 @@
 
 
 <body>
-    <div id="tp1"></div>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-
+    <div id="tp1">
+    
 
 
     <div>
                 <h6>{{titre}}</h6>
-
+                <br>
+                <button v-on:click="affiche()"> GO </button>
     </div>
 
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
     <script>
-        const app = new Vue( {el: '#tp1' } );
+        const app = new Vue( {
+
+    el: '#tp1',
+
 
     data: { 
-        titre = 
-        'Mon titre'
+        titre : 
+        'Hello!'
         ,
-        couleur = 
-        'vert'
+        couleur:
+        'purple'
+        },    
+        
+        
+        
+    methods: { 
+        affiche(){
+            console.log('a')
+        },
         }
+    });
     </script>
 
 
