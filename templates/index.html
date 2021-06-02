@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     <title>Liste de Personnes</title>
+</head>
+     
+<body>
+<div id="pers"> 
+<!-- nav bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+
+    <a class="navbar-brand m-3" href="{{ path('home' )}}">
+      <span style="font-size: 30px; ">
+        <i class="fas fa-user-friends"></i>
+      </span>
+      Liste de personnes</a>
+  </div>
+</nav>
+
+<!-- partie centrale -->
+<div class="container">
+  <div class="row">
+    <div class=" offset-2 col-8">
+      <div class="col-6 mt-4">
+        <div class="form-group">
+          <!-- on relie nom au data store -->
+          <input  class="form-control" v-model="prenom" placeholder="Prénom">
+        </div>
+        <div   class="form-group">
+        <input class="form-control" v-model="nom" placeholder="Nom">
+        </div>
+      </div>
+      <button @click="ajouter()" class="ml-4 btn btn-success">
+        <i class="fa fa-plus"></i>
+      </button>
+      <table class="mt-4 table table-striped">
+           <thead>
+                <tr>
+                     <th>Prénom</th>
+                     <th>Nom</th>
+                     <th>Action</th>
+                </tr>
+           </thead>
+           <tbody>
+               <!-- parcourir le tableau JS -->
+               <tr v-for="(p, index) in tableau">
+                <td>{{ p.prenom }}</td>
+                <td>{{ p.nom }}</td>
+                <td>
+                  <button 
+                  @click="enlever(index)"
+                  class="btn btn-danger">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+               </tr> 
+             
+           </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- footer -->
+<!-- Footer -->
+<footer class="py-5 bg-dark mt-4">
+  <div class="container">
+    <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+  </div>
+</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+const app = new Vue(
+  {
+    el :'#pers',
+    data :
+    {
+      tableau:[],
+      nom:'',
+      prenom:'',
+    },
+    methods:
+    {
+      ajouter()
+      {
+        let p ={}; // creation d objet
+        p.nom = this.nom;
+        p.prenom= this.prenom;
+        this.nom = '';
+        this.prenom= '';
+        // on ajoute ds le tableau
+         let url = '../tanaka/public/api/personnes/';
+        let param ={};
+        param.method = 'POST';
+        param.header = {'content-Type':'application/json'};
+        param.body = JSON.stringify(p); 
+        fetch(url,param)
+        .then( response => response.json() )
+        .then(
+          info =>{ 
+              console.log(info);
+              p.id = info.id;
+               this.tableau.push(p);
+        });
+      },
+      enlever(i)
+      {
+        this.tableau.splice(i,1);
+       // console.log(this.tableau);
+        let id = this.tableau[i].id;
+        console.log(id);
+        let url = '../tanaka/public/api/personnes/'+id;
+
+        let param ={};
+        param.method = 'DELETE';
+        param.header = {'content-Type':'application/json'};
+       
+        fetch(url,param)
+        .then( response => response.json() )
+        .then(
+          info =>{ 
+              console.log(info);
+        });
+      }
+    },mounted(){
+      let url = '../tanaka/public/api/personnes/';
+      fetch(url)
+      .then( response => response.json() )
+      .then(
+        tab =>{ 
+            this.tableau =tab;
+      });
+
+    }
+  });
+</script>
+</body>
+</html>
